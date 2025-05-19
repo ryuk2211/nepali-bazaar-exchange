@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, User, Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Search, User, Heart, ShoppingBag, Menu, X, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isAdmin = localStorage.getItem("isAdmin") === "true"; // Mock admin check
 
   const categories = [
     { name: "Sneakers", path: "/category/sneakers" },
@@ -17,6 +18,13 @@ const Navbar = () => {
     { name: "Electronics", path: "/category/electronics" },
     { name: "Trading Cards", path: "/category/trading-cards" },
   ];
+
+  // Function to toggle admin status (for demo purposes)
+  const toggleAdminStatus = () => {
+    const currentStatus = localStorage.getItem("isAdmin") === "true";
+    localStorage.setItem("isAdmin", (!currentStatus).toString());
+    window.location.reload();
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -75,6 +83,15 @@ const Navbar = () => {
           <Button variant="ghost" size="icon" aria-label="Cart">
             <ShoppingBag className="h-5 w-5" />
           </Button>
+          
+          {isAdmin && (
+            <Link to="/admin">
+              <Button variant="ghost" size="icon" aria-label="Admin">
+                <Shield className="h-5 w-5 text-nepx-accent" />
+              </Button>
+            </Link>
+          )}
+          
           {isLoggedIn ? (
             <Button variant="ghost" size="icon" aria-label="Account">
               <User className="h-5 w-5" />
@@ -86,6 +103,16 @@ const Navbar = () => {
               </Button>
             </Link>
           )}
+          
+          {/* For demo purposes only - toggle admin status */}
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={toggleAdminStatus}
+            className="text-xs"
+          >
+            {isAdmin ? "Exit Admin" : "Demo: Become Admin"}
+          </Button>
         </div>
       </div>
 
@@ -105,6 +132,18 @@ const Navbar = () => {
               {category.name}
             </Link>
           ))}
+          
+          {isAdmin && (
+            <Link 
+              to="/admin"
+              className="transition-colors hover:text-nepx-secondary flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Shield className="mr-2 h-4 w-4 text-nepx-accent" />
+              Admin Dashboard
+            </Link>
+          )}
+          
           <div className="py-4">
             <div className="relative w-full">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
